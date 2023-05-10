@@ -1,0 +1,19 @@
+fileFormatVersion: 2
+guid: b55ccc06feae33c4289694a47bea83c6
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - cubePrefab: {fileID: 2234111864903667817, guid: ba703789236999446a85f876fd165edd, type: 3}
+  - playerPrefab: {fileID: 4227778596912342678, guid: f5fc5271fea37ba4dbf7e03b37c5bea2, type: 3}
+  - diamondPrefab: {fileID: 4370819969367767623, guid: 558788aa2b1c02c46aeb6a925109bc5c, type: 3}
+  - finishPrefab: {fileID: 3975661615042086561, guid: 7848bfe3bfd01744693ddf23a44c1f31, type: 3}
+  - wallPrefab: {fileID: 2022662628660666505, guid: c49da89564d68954085caa75f4de4d31, type: 3}
+  - lavaPrefab: {fileID: 80816840226375296, guid: 4f621fc5f0d29a24e9c7f6cce48f16c3, type: 3}
+  - platformPrefab: {fileID: 8342562674934208209, guid: 4658cb45bdcfbe54b8f38c38821d24b0, type: 3}
+  - wallCubeRotatingPrefab: {fileID: 7841094143193611361, guid: 408b31332a75b394db121f07ffb22614, type: 3}
+  executionOrder: -80
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
