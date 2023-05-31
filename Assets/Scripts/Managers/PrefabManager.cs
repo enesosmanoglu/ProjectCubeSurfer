@@ -4,26 +4,29 @@ using UnityEngine;
 
 public class PrefabManager : MonoBehaviour
 {
-    #region Singleton
+    #region Singleton Bool
     public static PrefabManager Instance { get; private set; }
-    private void Singleton()
+    private bool Singleton()
     {
         if (Instance != null && Instance != this)
         {
             Destroy(this.gameObject);
             Destroy(this);
+            return false;
         }
         else
         {
             Instance = this;
             DontDestroyOnLoad(this.gameObject);
+            return true;
         }
     }
     #endregion
 
     private void Awake()
     {
-        Singleton();
+        if (!Singleton()) return;
+        Debug.Log("### AWAKE ### PrefabManager");
     }
 
     [Header("Prefabs")]

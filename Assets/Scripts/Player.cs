@@ -11,6 +11,8 @@ public class Player : MonoBehaviour
     }
     private void OnTriggerEnter(Collider other)
     {
+        if (Managers.Game.gameState == GameState.LevelPassed) return;
+
         if (animator == null)
             animator = GetComponentInChildren<Animator>();
 
@@ -23,7 +25,7 @@ public class Player : MonoBehaviour
             Managers.Game.GameOver();
         }
 
-        else if (other.transform.CompareTag("FinishWall"))
+        else if (other.transform.CompareTag("FinishWall") || other.transform.CompareTag("Finish"))
         {
             Managers.Game.LevelPassed();
         }

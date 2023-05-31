@@ -4,26 +4,31 @@ using UnityEngine;
 
 public class SoundManager : MonoBehaviour
 {
-    #region Singleton
+    #region Singleton Bool
     public static SoundManager Instance { get; private set; }
-    private void Singleton()
+    private bool Singleton()
     {
         if (Instance != null && Instance != this)
         {
             Destroy(this.gameObject);
             Destroy(this);
+            return false;
         }
         else
         {
             Instance = this;
             DontDestroyOnLoad(this.gameObject);
+            return true;
         }
     }
     #endregion
 
     private void Awake()
     {
-        Singleton();
+        if (!Singleton()) return;
+        Debug.Log("### AWAKE ### SoundManager");
+        volume = PlayerPrefs.GetFloat("effects_volume", volume);
+        bgVolume = PlayerPrefs.GetFloat("music_volume", bgVolume);
     }
 
     private void Start()
@@ -37,6 +42,18 @@ public class SoundManager : MonoBehaviour
         {
             MainCamera.Instance.audioSource.volume = bgVolume * bgVolumeMultiplier;
         }
+    }
+
+    public void SetVolumeEffects(float value)
+    {
+        volume = value;
+        PlayerPrefs.SetFloat("effects_volume", value);
+    }
+
+    public void SetVolumeMusic(float value)
+    {
+        bgVolume = value;
+        PlayerPrefs.SetFloat("music_volume", value);
     }
 
     private float bgVolumeMultiplier = 0.3f;
@@ -69,16 +86,19 @@ public class SoundManager : MonoBehaviour
 
     public void PlayCubePickupSound(Transform target = null)
     {
+        if (Managers.Game.gameState != GameState.Playing) return;
         PlaySound(cubePickup, target);
     }
 
     public void PlayDiamondPickupSound(Transform target = null)
     {
+        if (Managers.Game.gameState == GameState.MainMenu) return;
         PlaySound(diamondPickup, target);
     }
 
     public void PlayCubeDropSound(Transform target = null)
     {
+        if (Managers.Game.gameState != GameState.Playing) return;
         PlaySound(cubeDrop, target);
     }
 
@@ -89,6 +109,7 @@ public class SoundManager : MonoBehaviour
 
     public void PlayGameOverSound(Transform target = null)
     {
+        if (Managers.Game.gameState == GameState.MainMenu) return;
         PlaySound(gameOver, target);
     }
     public void PlayButtonClickSound(Transform target = null)
@@ -98,6 +119,7 @@ public class SoundManager : MonoBehaviour
 
     public void PlayLavaSound(Transform target = null)
     {
+        if (Managers.Game.gameState == GameState.MainMenu) return;
         PlaySound(lava, target);
     }
 

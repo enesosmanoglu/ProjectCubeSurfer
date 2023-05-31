@@ -4,10 +4,11 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using TMPro;
+using System;
 // using TMPro;
 public class GameManager : MonoBehaviour
 {
-    #region Singleton
+    #region Singleton Bool
     public static GameManager Instance { get; private set; }
     private bool Singleton()
     {
@@ -29,33 +30,55 @@ public class GameManager : MonoBehaviour
     private void Awake()
     {
         if (!Singleton()) return;
+        Debug.Log("### AWAKE ### GameManager");
         Camera = Camera.main;
         cameraStartOffset = Camera.transform.position - Managers.Reference.player.position;
         cameraStartRotation = Camera.transform.rotation;
-        // set camera on scene load
-        SceneManager.sceneLoaded += (Scene scene, LoadSceneMode mode) =>
-        {
-            Camera = Camera.main;
-            // set camera pos back to player
-            Camera.transform.position = Managers.Reference.player.position + cameraStartOffset;
-            Camera.transform.rotation = cameraStartRotation;
 
-            Managers.Reference.pauseButton?.gameObject.SetActive(true);
-            Managers.Reference.pauseCanvas?.gameObject.SetActive(false);
-            Managers.Reference.settingsPanel?.SetActive(false);
-            Managers.Reference.effectsSlider?.SetValueWithoutNotify(Managers.Sound.volume);
-            Managers.Reference.musicSlider?.SetValueWithoutNotify(Managers.Sound.bgVolume);
-            Managers.Reference.endLevelCanvas?.gameObject.SetActive(false);
-            Start();
-            Managers.UI.UpdateCubeText();
-            Managers.UI.UpdateScoreText();
-        };
         diamonds = PlayerPrefs.GetInt("Diamonds", 0);
         Managers.UI.UpdateScoreText();
     }
 
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        Debug.Log("### SCENE LOADED ### GameManager >> " + scene.name);
+        Camera = Camera.main;
+        // set camera pos back to player
+        Camera.transform.position = Managers.Reference.player.position + cameraStartOffset;
+        Camera.transform.rotation = cameraStartRotation;
+
+        Managers.Reference.pauseButton?.gameObject.SetActive(true);
+        Managers.Reference.pauseCanvas?.gameObject.SetActive(false);
+        Managers.Reference.settingsPanel?.SetActive(false);
+        Managers.Reference.marketPanel?.SetActive(false);
+        Managers.Reference.effectsSlider?.SetValueWithoutNotify(Managers.Sound.volume);
+        Managers.Reference.musicSlider?.SetValueWithoutNotify(Managers.Sound.bgVolume);
+        Managers.Reference.endLevelCanvas?.gameObject.SetActive(false);
+
+        diamonds = PlayerPrefs.GetInt("Diamonds", 0);
+        Managers.UI.UpdateCubeText();
+        Managers.UI.UpdateScoreText();
+        Start();
+    }
+
+    private void OnEnable()
+    {
+        Debug.Log("### ENABLED ### GameManager");
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+
+    private void OnDisable()
+    {
+        Debug.Log("### DISABLED ### GameManager");
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
+
     private void Start()
     {
+        int level = PlayerPrefs.GetInt("Level", 0);
+        if (level != 0)
+            Managers.Reference.startButton?.GetComponentInChildren<TMP_Text>().SetText("CONTINUE");
+
         playerStartPos = Managers.Reference.player.position;
         cubeCount = startCubeCount;
         for (int i = 0; i < Managers.Reference.playerCubes.childCount; i++)
@@ -76,6 +99,8 @@ public class GameManager : MonoBehaviour
             }
         }
 
+        Managers.Skin.SetAllCubeSkins();
+
         CreateEnvironment();
     }
 
@@ -83,7 +108,7 @@ public class GameManager : MonoBehaviour
     {
         if (Managers.Reference.finishPlatforms.Count == 0)
         {
-            Debug.LogError("No finish platforms found!");
+            // Debug.LogError("No finish platforms found!");
             return;
         }
 
@@ -132,24 +157,72 @@ public class GameManager : MonoBehaviour
         Managers.Reference.endLevelCanvas.gameObject.SetActive(true);
         Managers.Reference.pauseButton.gameObject.SetActive(false);
     }
+    public int GetCubeCount()
+    {
+        int childCount = Managers.Reference.playerCubes.childCount;
+        if (childCount == 1 && Managers.Reference.playerCubes.GetChild(0).CompareTag("Player"))
+        {
+            childCount = 0;
+        }
+        return childCount;
+    }
 
     public void LevelPassed()
     {
+        if (gameState == GameState.LevelPassed) return;
+        Debug.Log("Level Passed!");
+        gameState = GameState.LevelPassed;
+        int currentLevel = Int32.Parse(SceneManager.GetActiveScene().name.Substring(5));
+        PlayerPrefs.SetInt("Level", currentLevel + 1);
+        StartCoroutine(ConvertCubesToDiamonds());
         Managers.Sound.PlayLevelPassedSound(Managers.Reference.player);
         ResetPlayerModel();
         Managers.Reference.player.GetComponentInChildren<Animator>().SetTrigger("Win");
-        gameState = GameState.LevelPassed;
         Managers.Reference.nextLevelButton.GetComponentInChildren<TMP_Text>().text = "NEXT LEVEL";
         Managers.Reference.nextLevelText.text = "YOU WIN";
         Managers.Reference.nextLevelText.color = Color.green;
         Managers.Reference.endLevelCanvas.gameObject.SetActive(true);
         Managers.Reference.pauseButton.gameObject.SetActive(false);
+        // Convert collected cubes to diamonds
+        Managers.Ad.ShowInterstitialAd();
     }
 
-    public void CollectDiamond()
+    private IEnumerator ConvertCubesToDiamonds()
+    {
+        Debug.Log("#### Converting cubes to diamonds");
+        while (Managers.Reference.playerCubes.childCount != 0)
+        {
+            Transform child = Managers.Reference.playerCubes.GetChild(Managers.Reference.playerCubes.childCount - 1);
+            Debug.Log("#### Converting cubes to diamonds: " + child.name);
+            if (child.CompareTag("Player"))
+            {
+                child.SetParent(Managers.Reference.worldCubes);
+            }
+            else if (child.CompareTag("Cube"))
+            {
+                child.GetComponentInChildren<Player>()?.transform.SetParent(Managers.Reference.worldCubes);
+                yield return new WaitForSeconds(0.2f);
+                CollectDiamond(3);
+                child.SetParent(Managers.Reference.worldCubes);
+                try { Destroy(child.gameObject); } catch (System.Exception) { }
+                Managers.UI.UpdateCubeText();
+            }
+        }
+        Managers.UI.UpdateCubeText();
+    }
+
+    public void CollectDiamond(int amount = 1)
     {
         Managers.Sound.PlayDiamondPickupSound();
-        diamonds++;
+        diamonds += amount;
+        Managers.UI.UpdateScoreText();
+        PlayerPrefs.SetInt("Diamonds", diamonds);
+    }
+
+    public void DecreaseDiamond(int amount = 1)
+    {
+        Managers.Sound.PlayDiamondPickupSound();
+        diamonds -= amount;
         Managers.UI.UpdateScoreText();
         PlayerPrefs.SetInt("Diamonds", diamonds);
     }
@@ -161,7 +234,7 @@ public class GameManager : MonoBehaviour
         Managers.Reference.player.SetParent(playerCubes);
         cubeCount = playerCubes.childCount - 1;
         Managers.UI.UpdateCubeText();
-        Debug.Log("Cube Count: " + cubeCount);
+        // Debug.Log("Cube Count: " + cubeCount);
 
         Transform topCube = null;
         for (int i = 0; i < playerCubes.childCount; i++)

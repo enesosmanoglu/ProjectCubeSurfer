@@ -6,7 +6,8 @@ public class Cube : MonoBehaviour
 {
     private void OnTriggerEnter(Collider other)
     {
-        if (other.transform.CompareTag("WallCube"))
+        if (Managers.Game.gameState == GameState.LevelPassed) return;
+        if (other.transform.CompareTag("WallCube") || other.transform.CompareTag("FinishWall"))
         {
             if (Managers.Reference.player.parent == transform)
             {
@@ -19,14 +20,16 @@ public class Cube : MonoBehaviour
             Managers.Sound.PlayCubeDropSound(transform);
         }
 
-        else if (other.transform.CompareTag("FinishWall"))
+        else if (other.transform.CompareTag("Finish"))
         {
-            Debug.Log("FinishWall");
+            Debug.Log("Finish");
             Managers.Game.LevelPassed();
         }
+
     }
     private void OnCollisionEnter(Collision other)
     {
+        if (Managers.Game.gameState == GameState.LevelPassed) return;
         if (!transform.parent) return;
 
         if (transform.parent.CompareTag("PlayerCubes")) return; // if this is the collected cube, return (only check non collected cubes)

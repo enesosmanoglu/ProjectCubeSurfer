@@ -27,7 +27,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2234111864903667817}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: -3.5, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 3660179742951712136}
@@ -84,8 +84,16 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 4715398032792219890, guid: b87bf2337266be94cb7e3bb6b64ad42a, type: 3}
       propertyPath: m_Name
-      value: BlueCube
+      value: CubeSkin
       objectReference: {fileID: 0}
+    - target: {fileID: 4715398032792219890, guid: b87bf2337266be94cb7e3bb6b64ad42a, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4715398032792219892, guid: b87bf2337266be94cb7e3bb6b64ad42a, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: c942f8dd3d4822e459eaa502449180ac, type: 2}
     - target: {fileID: 4715398032792219894, guid: b87bf2337266be94cb7e3bb6b64ad42a, type: 3}
       propertyPath: m_RootOrder
       value: 0

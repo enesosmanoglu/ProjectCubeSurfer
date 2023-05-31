@@ -188,6 +188,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Finish (1)
       objectReference: {fileID: 0}
+    - target: {fileID: 9190008548816187905, guid: 7848bfe3bfd01744693ddf23a44c1f31, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 7848bfe3bfd01744693ddf23a44c1f31, type: 3}
 --- !u!4 &276007024 stripped
@@ -1117,6 +1121,7 @@ MonoBehaviour:
   cubeCount: 0
   Camera: {fileID: 0}
   cameraStartOffset: {x: 0, y: 0, z: 0}
+  cameraStartRotation: {x: 0, y: 0, z: 0, w: 1}
 --- !u!4 &768785119
 Transform:
   m_ObjectHideFlags: 0
@@ -1147,10 +1152,10 @@ MonoBehaviour:
   playerPrefab: {fileID: 4227778596912342678, guid: f5fc5271fea37ba4dbf7e03b37c5bea2, type: 3}
   diamondPrefab: {fileID: 0}
   finishPrefab: {fileID: 0}
-  finishStairPrefab: {fileID: 0}
   wallPrefab: {fileID: 0}
   lavaPrefab: {fileID: 0}
   platformPrefab: {fileID: 0}
+  wallCubeRotatingPrefab: {fileID: 0}
 --- !u!114 &768785121
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1166,6 +1171,8 @@ MonoBehaviour:
   player: {fileID: 276007024}
   playerCubes: {fileID: 799534460}
   worldCubes: {fileID: 1872134800}
+  platform: {fileID: 0}
+  finishPlatforms: []
   scoreText: {fileID: 1776634179}
   cubeText: {fileID: 1431461931}
   levelText: {fileID: 383802618}
@@ -1177,8 +1184,21 @@ MonoBehaviour:
   mainMenuButtons: []
   nextLevelButton: {fileID: 0}
   restartButton: {fileID: 0}
+  settingsButton: {fileID: 0}
+  rewardButton: {fileID: 0}
+  marketButton: {fileID: 0}
+  removeAdsButton: {fileID: 0}
+  cubeSkinButtons: []
+  cubeSkinButtonsPriced: []
+  restorePurchasesButton: {fileID: 0}
   pauseCanvas: {fileID: 0}
   endLevelCanvas: {fileID: 0}
+  mainMenuPanel: {fileID: 0}
+  settingsPanel: {fileID: 0}
+  marketPanel: {fileID: 0}
+  effectsSlider: {fileID: 0}
+  musicSlider: {fileID: 0}
+  nativeAd: {fileID: 0}
 --- !u!1 &799534459
 GameObject:
   m_ObjectHideFlags: 0

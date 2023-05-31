@@ -30,6 +30,14 @@ TagManager:
   - EffectsSlider
   - MusicSlider
   - SettingsButton
+  - RewardButton
+  - RemoveAdsButton
+  - MarketPanel
+  - MarketButton
+  - CubeSkinButton
+  - CubeSkinPricedButton
+  - NativeAd
+  - RestorePurchasesButton
   layers:
   - Default
   - TransparentFX
